@@ -1,0 +1,309 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CanvasPack",
+  "type": "object",
+  "required": [
+    "pack_version",
+    "created_at",
+    "source",
+    "structure",
+    "chunks",
+    "artifacts",
+    "evidence_graph",
+    "validation",
+    "metadata"
+  ],
+  "properties": {
+    "pack_version": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "source": {
+      "type": "object",
+      "required": ["type", "title", "original_filename", "sha256"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["pdf", "epub", "text"]
+        },
+        "title": { "type": "string" },
+        "original_filename": { "type": "string" },
+        "sha256": { "type": "string" },
+        "author": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "structure": {
+      "type": "object",
+      "properties": {
+        "pages": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Page" }
+        },
+        "sections": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Section" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "chunks": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/Chunk" }
+    },
+    "artifacts": {
+      "type": "object",
+      "properties": {
+        "outline": { "$ref": "#/definitions/OutlineArtifact" },
+        "summaries": { "$ref": "#/definitions/SummariesArtifact" },
+        "runbook": { "$ref": "#/definitions/RunbookArtifact" },
+        "flowcharts": { "$ref": "#/definitions/FlowchartsArtifact" },
+        "tables": { "$ref": "#/definitions/TablesArtifact" },
+        "qa": { "$ref": "#/definitions/QaArtifact" }
+      },
+      "additionalProperties": false
+    },
+    "evidence_graph": {
+      "type": "object",
+      "properties": {
+        "nodes": { "type": "array", "items": { "$ref": "#/definitions/EvidenceNode" } },
+        "edges": { "type": "array", "items": { "$ref": "#/definitions/EvidenceEdge" } }
+      },
+      "required": ["nodes", "edges"],
+      "additionalProperties": false
+    },
+    "validation": {
+      "type": "object",
+      "properties": {
+        "claims": { "type": "array", "items": { "$ref": "#/definitions/ClaimValidationResult" } }
+      },
+      "required": ["claims"],
+      "additionalProperties": false
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "generator_versions": { "type": "object", "additionalProperties": { "type": "string" } },
+        "provider": { "type": "string" },
+        "config": { "type": "object" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "definitions": {
+    "Page": {
+      "type": "object",
+      "required": ["page_number", "text"],
+      "properties": {
+        "page_number": { "type": "integer", "minimum": 1 },
+        "text": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "Section": {
+      "type": "object",
+      "required": ["section_id", "title", "order", "text"],
+      "properties": {
+        "section_id": { "type": "string" },
+        "title": { "type": "string" },
+        "order": { "type": "integer" },
+        "text": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "CitationRef": {
+      "type": "object",
+      "required": ["doc_sha256", "kind", "char_start", "char_end", "excerpt", "confidence"],
+      "properties": {
+        "doc_sha256": { "type": "string" },
+        "kind": { "type": "string", "enum": ["pdf_page", "epub_location", "text_location"] },
+        "page": { "type": "integer", "minimum": 1 },
+        "section_id": { "type": "string" },
+        "char_start": { "type": "integer", "minimum": 0 },
+        "char_end": { "type": "integer", "minimum": 0 },
+        "excerpt": { "type": "string" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "Chunk": {
+      "type": "object",
+      "required": ["chunk_id", "text", "loc"],
+      "properties": {
+        "chunk_id": { "type": "string" },
+        "text": { "type": "string" },
+        "loc": { "$ref": "#/definitions/CitationRef" }
+      },
+      "additionalProperties": false
+    },
+    "OutlineArtifact": {
+      "type": "object",
+      "properties": {
+        "nodes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "title", "citations"],
+            "properties": {
+              "id": { "type": "string" },
+              "title": { "type": "string" },
+              "citations": { "type": "array", "items": { "$ref": "#/definitions/CitationRef" } }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": ["nodes"],
+      "additionalProperties": false
+    },
+    "SummariesArtifact": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "text", "citations"],
+            "properties": {
+              "id": { "type": "string" },
+              "text": { "type": "string" },
+              "citations": { "type": "array", "items": { "$ref": "#/definitions/CitationRef" } }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": ["items"],
+      "additionalProperties": false
+    },
+    "RunbookArtifact": {
+      "type": "object",
+      "properties": {
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "title", "instructions", "citations"],
+            "properties": {
+              "id": { "type": "string" },
+              "title": { "type": "string" },
+              "instructions": { "type": "array", "items": { "type": "string" } },
+              "citations": { "type": "array", "items": { "$ref": "#/definitions/CitationRef" } }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": ["steps"],
+      "additionalProperties": false
+    },
+    "FlowchartsArtifact": {
+      "type": "object",
+      "properties": {
+        "mermaid": { "type": "string" },
+        "nodes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "label", "citations"],
+            "properties": {
+              "id": { "type": "string" },
+              "label": { "type": "string" },
+              "citations": { "type": "array", "items": { "$ref": "#/definitions/CitationRef" } }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": ["mermaid", "nodes"],
+      "additionalProperties": false
+    },
+    "TablesArtifact": {
+      "type": "object",
+      "properties": {
+        "markdown": { "type": "string" },
+        "csv": { "type": "string" },
+        "tables": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "title", "rows"],
+            "properties": {
+              "id": { "type": "string" },
+              "title": { "type": "string" },
+              "rows": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["cells", "citations"],
+                  "properties": {
+                    "cells": { "type": "array", "items": { "type": "string" } },
+                    "citations": { "type": "array", "items": { "$ref": "#/definitions/CitationRef" } }
+                  },
+                  "additionalProperties": false
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": ["tables"],
+      "additionalProperties": false
+    },
+    "QaArtifact": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "question", "citations"],
+            "properties": {
+              "id": { "type": "string" },
+              "question": { "type": "string" },
+              "citations": { "type": "array", "items": { "$ref": "#/definitions/CitationRef" } }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": ["items"],
+      "additionalProperties": false
+    },
+    "EvidenceNode": {
+      "type": "object",
+      "required": ["id", "label", "kind"],
+      "properties": {
+        "id": { "type": "string" },
+        "label": { "type": "string" },
+        "kind": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "EvidenceEdge": {
+      "type": "object",
+      "required": ["from", "to", "type"],
+      "properties": {
+        "from": { "type": "string" },
+        "to": { "type": "string" },
+        "type": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "ClaimValidationResult": {
+      "type": "object",
+      "required": ["id", "verdict", "message"],
+      "properties": {
+        "id": { "type": "string" },
+        "verdict": { "type": "string", "enum": ["supported", "unsupported", "unclear", "missing_citations"] },
+        "message": { "type": "string" },
+        "citations": { "type": "array", "items": { "$ref": "#/definitions/CitationRef" } }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

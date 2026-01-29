@@ -1,0 +1,5 @@
+Sample Document
+
+1. Open the system settings.
+2. Review the configuration.
+3. Save your changes.

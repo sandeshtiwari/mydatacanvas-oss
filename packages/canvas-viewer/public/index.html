@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Canvas Viewer</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <h1>Canvas Viewer</h1>
+          <p class="subtitle">Open a CanvasPack and review citations.</p>
+          <input id="fileInput" type="file" accept=".json" />
+        </div>
+        <div class="section">
+          <h2>Outline</h2>
+          <ul id="outlineList" class="list"></ul>
+        </div>
+      </aside>
+      <main class="content">
+        <header class="toolbar">
+          <button data-view="summaries">Summary</button>
+          <button data-view="runbook">Runbook</button>
+          <button data-view="flowcharts">Flowchart</button>
+          <button data-view="tables">Tables</button>
+          <button data-view="qa">Q&A Seeds</button>
+        </header>
+        <section id="artifactView" class="artifact"></section>
+      </main>
+      <aside class="evidence">
+        <h2>Evidence</h2>
+        <div id="evidenceContent" class="evidence-content">
+          <p>Select a citation to view its excerpt.</p>
+        </div>
+      </aside>
+    </div>
+    <script src="./app.js"></script>
+  </body>
+</html>

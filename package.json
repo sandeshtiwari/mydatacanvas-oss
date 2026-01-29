@@ -1,0 +1,23 @@
+{
+  "name": "@mydatacanvas/oss",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "tsc -b packages/canvas-schema packages/canvas-core packages/canvas-cli",
+    "test": "vitest run",
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "check:imports": "bash ./scripts/check-imports.sh",
+    "smoke": "bash ./scripts/smoke.sh"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "eslint": "^8.57.0",
+    "typescript": "^5.6.3",
+    "vitest": "^1.6.0"
+  }
+}

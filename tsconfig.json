@@ -1,0 +1,8 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/canvas-schema" },
+    { "path": "packages/canvas-core" },
+    { "path": "packages/canvas-cli" }
+  ]
+}
