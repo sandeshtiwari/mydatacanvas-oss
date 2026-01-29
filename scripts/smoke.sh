@@ -25,7 +25,7 @@ $CLI flow "$TMPDIR/epub.pack.json" --out "$TMPDIR/flow.mmd"
 $CLI table "$TMPDIR/epub.pack.json" --out "$TMPDIR/tables.md"
 
 $CLI ask "$TMPDIR/epub.pack.json" "What is this book about?" --out "$TMPDIR/answer.md"
-$CLI validate "$TMPDIR/epub.pack.json" --fail-on error
+$CLI validate "$TMPDIR/epub.pack.json" --fail-on error --out "$TMPDIR/validation.json"
 $CLI diff "$TMPDIR/epub.pack.json" "$TMPDIR/txt.pack.json" --out "$TMPDIR/diff.md"
 
 for file in outline.md summaries.md runbook.md flow.mmd tables.md answer.md diff.md; do

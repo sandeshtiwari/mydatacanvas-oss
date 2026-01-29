@@ -123,12 +123,13 @@ program
   .command("validate")
   .argument("<pack>", "CanvasPack JSON")
   .option("--fail-on <verdict>", "Fail if any claim matches verdict", "missing_citations")
+  .option("--out <path>", "Output path", "validation.json")
   .action(async (packPath, options) => {
     const pack = loadPack(packPath);
     const report = validatePack(pack);
-    await fs.promises.writeFile("validation.json", JSON.stringify(report, null, 2), "utf-8");
+    await fs.promises.writeFile(options.out, JSON.stringify(report, null, 2), "utf-8");
     // eslint-disable-next-line no-console
-    console.log("Saved validation report to validation.json");
+    console.log(`Saved validation report to ${options.out}`);
     if (options.failOn === "error") {
       if (report.claims.length > 0) {
         process.exit(1);
