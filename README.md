@@ -23,7 +23,7 @@ npm run test
 ```bash
 node packages/canvas-cli/dist/index.js ingest examples/sample.epub --out /tmp/book.pack.json
 node packages/canvas-cli/dist/index.js runbook /tmp/book.pack.json --out /tmp/runbook.md
-node packages/canvas-cli/dist/index.js view /tmp/book.pack.json
+node packages/canvas-cli/dist/index.js view /tmp/book.pack.json --port 4547
 ```
 
 Sample files:
@@ -32,6 +32,21 @@ Sample files:
 - `oss/examples/sample.txt`
 
 `canvas view` starts a local viewer (no auth) that lets you click citations to see excerpts.
+Open `http://localhost:4547` in your browser.
+
+### Generate all artifacts at once
+
+```bash
+node packages/canvas-cli/dist/index.js generate-all /tmp/book.pack.json --out /tmp/book-outputs
+```
+
+Outputs include:
+- `outline.md`
+- `summaries.md`
+- `runbook.md`
+- `flow.mmd`
+- `tables.md`
+- `validation.json`
 
 ### Expected outputs
 

@@ -6,7 +6,9 @@ const fileInput = document.getElementById("fileInput");
 
 async function loadPackFromServer() {
   try {
-    const res = await fetch("/pack.json");
+    const params = new URLSearchParams(window.location.search);
+    const packUrl = params.get("packUrl") || "pack.json";
+    const res = await fetch(packUrl);
     if (!res.ok) return;
     const data = await res.json();
     setPack(data);
@@ -86,8 +88,31 @@ function renderRunbook() {
 }
 
 function renderFlowchart() {
-  const mermaid = packData.artifacts?.flowcharts?.mermaid || "No flowchart available.";
-  artifactView.innerHTML = `<h3>Flowchart (Mermaid)</h3><pre>${mermaid}</pre>`;
+  const mermaid = packData.artifacts?.flowcharts?.mermaid;
+  artifactView.innerHTML = `<h3>Flowchart</h3>`;
+  if (!mermaid) {
+    artifactView.insertAdjacentHTML("beforeend", "<p>No flowchart available.</p>");
+    return;
+  }
+
+  const container = document.createElement("div");
+  container.className = "mermaid";
+  container.textContent = mermaid;
+  artifactView.appendChild(container);
+
+  if (window.mermaid && typeof window.mermaid.run === "function") {
+    try {
+      window.mermaid.initialize({ startOnLoad: false });
+      window.mermaid.run({ nodes: [container] });
+      return;
+    } catch (err) {
+      // fall through to preformatted fallback
+    }
+  }
+
+  const fallback = document.createElement("pre");
+  fallback.textContent = mermaid;
+  artifactView.appendChild(fallback);
 }
 
 function renderTables() {
